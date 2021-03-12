@@ -41,6 +41,10 @@
             		type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="auth_token"
+            		type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         
         <addUniqueConstraint columnNames="name" 
