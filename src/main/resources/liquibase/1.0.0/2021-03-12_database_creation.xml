@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <changeSet author="stoldo" id="2021-03-12_database_creation">
+    	
+    	<createTable tableName="user">
+            <column autoIncrement="true" 
+            		name="id" 
+            		type="serial">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="firstname" 
+            		type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="lastname" 
+            		type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="password" 
+            		type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" 
+            		type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint columnNames="email" 
+        					 constraintName="user_email_uq" 
+        					 tableName="user"/>
+    	
+    	
+    	<createTable tableName="security_system">
+            <column autoIncrement="true" 
+            		name="id" 
+            		type="serial">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" 
+            		type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addUniqueConstraint columnNames="name" 
+        					 constraintName="security_system_name_uq" 
+        					 tableName="security_system"/>
+        
+        
+        <createTable tableName="security_system_history">
+            <column autoIncrement="true" 
+            		name="id" 
+            		type="serial">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="datetime" 
+            		type="DATETIME">
+                <constraints nullable="false"/>
+            </column> 
+            <column name="type" 
+            		type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id_fk" 
+            		type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="security_system_id_fk" 
+            		type="INT">
+                <constraints nullable="false"/>
+            </column>
+		</createTable>
+		
+		<addForeignKeyConstraint baseColumnNames="user_id_fk" 
+								 baseTableName="security_system_history" 
+								 constraintName="user_id_fk" 
+								 referencedColumnNames="id" 
+								 referencedTableName="user"/>
+								 
+		<addForeignKeyConstraint baseColumnNames="security_system_id_fk" 
+								 baseTableName="security_system_history" 
+								 constraintName="security_system_id_fk" 
+								 referencedColumnNames="id" 
+								 referencedTableName="security_system"/>
+
+		<rollback>
+			<dropTable tableName="security_system_history" />
+			<dropTable tableName="security_system" />
+			<dropTable tableName="user" />
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
