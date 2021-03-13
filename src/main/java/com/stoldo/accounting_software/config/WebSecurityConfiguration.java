@@ -47,6 +47,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		
 		http.authorizeRequests()
 			.antMatchers(HttpMethod.POST, "/login").permitAll()
+			.antMatchers(HttpMethod.POST, "/api/users/register").permitAll()
+			.antMatchers(HttpMethod.POST, "/api/security-system/{securitySystemId}/history").permitAll() // end point for device, it will be authenticated via auth token
+			.antMatchers(HttpMethod.POST, "/api/security-system/{securitySystem}/pair/finish").permitAll() // end point for device, it will be authenticated via auth token
 			.anyRequest()
 			.authenticated();
 

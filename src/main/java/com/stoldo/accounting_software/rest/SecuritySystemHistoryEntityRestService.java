@@ -26,14 +26,12 @@ public class SecuritySystemHistoryEntityRestService {
     private SecuritySystemEntityService securitySystemEntityService;
 
 	
-	// TODO secure
     @RequestMapping(method = RequestMethod.GET)
     public List<SecuritySystemHistoryEntity> getHistory(@PathVariable Integer securitySystemId) {
     	SecuritySystemEntity sse = securitySystemEntityService.getById(securitySystemId);
     	return securitySystemHistoryEntityService.getHistory(sse);
     }
 	
-    // TODO permitt all
     @ResponseStatus(code = HttpStatus.CREATED)
     @RequestMapping(method = RequestMethod.POST)
     public SecuritySystemHistoryEntity addHistory(@RequestHeader("auth_token") String authToken, @PathVariable Integer securitySystemId, @RequestBody @Valid SecuritySystemHistoryCreateRequest sshcr) {

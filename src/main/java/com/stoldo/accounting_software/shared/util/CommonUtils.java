@@ -1,6 +1,8 @@
 package com.stoldo.accounting_software.shared.util;
 
 import java.util.Arrays;
+import java.util.UUID;
+
 import org.springframework.core.env.MutablePropertySources;
 
 
@@ -33,5 +35,9 @@ public class CommonUtils {
 				.filter(p -> p != null)
 				.findFirst()
 				.orElse(null);
+	}
+	
+	public static String generateAuthToken() {
+		return UUID.randomUUID().toString();
 	}
 }
