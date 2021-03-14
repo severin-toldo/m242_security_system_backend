@@ -24,10 +24,18 @@
             		type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="rfid_uuid" 
+            		type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 
         <addUniqueConstraint columnNames="email" 
         					 constraintName="user_email_uq" 
+        					 tableName="user"/>
+        					 
+        <addUniqueConstraint columnNames="rfid_uuid" 
+        					 constraintName="user_rfid_uuid_uq" 
         					 tableName="user"/>
     	
     	
