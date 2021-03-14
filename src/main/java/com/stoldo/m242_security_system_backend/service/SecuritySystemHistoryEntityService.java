@@ -1,5 +1,6 @@
 package com.stoldo.m242_security_system_backend.service;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -28,7 +29,7 @@ public class SecuritySystemHistoryEntityService {
 	
     public SecuritySystemHistoryEntity addHistory(SecuritySystemEntity sse, SecuritySystemHistoryCreateRequest sshcr) {
     	SecuritySystemHistoryEntity sshe = new SecuritySystemHistoryEntity();
-    	sshe.setDatetime(sshcr.getDatetime());
+    	sshe.setDatetime(new Date());
     	sshe.setType(sshcr.getType());
     	sshe.setUser(userEntityService.getByRfidUUID(sshcr.getUserRfidUUID()));
     	sshe.setSecuritySystem(sse);
