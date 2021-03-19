@@ -3,6 +3,8 @@ package com.stoldo.m242_security_system_backend.config.filter;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stoldo.m242_security_system_backend.model.ErrorCode;
+import com.stoldo.m242_security_system_backend.model.ErrorCodeException;
 import com.stoldo.m242_security_system_backend.model.api.UserLoginRequest;
 import com.stoldo.m242_security_system_backend.model.entity.UserEntity;
 import com.stoldo.m242_security_system_backend.service.UserEntityService;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,7 +34,7 @@ import java.util.logging.Level;
 
 @Log
 @RequiredArgsConstructor
-public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
+public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final UserEntityService userEntityService;
@@ -45,7 +48,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
         	UserLoginRequest ulr = new ObjectMapper().readValue(req.getInputStream(), UserLoginRequest.class);
             return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(ulr.getEmail(), ulr.getPassword(), Collections.emptyList()));
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+        	throw new ErrorCodeException(ErrorCode.E1001, HttpStatus.BAD_REQUEST);
         }
     }
 

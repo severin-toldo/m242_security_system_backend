@@ -4,16 +4,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.stoldo.m242_security_system_backend.model.ErrorCode;
+import com.stoldo.m242_security_system_backend.model.ErrorCodeException;
 import com.stoldo.m242_security_system_backend.model.PairableSecuritySystem;
 import com.stoldo.m242_security_system_backend.model.api.SecuritySystemFinishPairRequest;
 import com.stoldo.m242_security_system_backend.model.entity.SecuritySystemEntity;
@@ -34,7 +36,7 @@ public class SecuritySystemEntityService {
     }
 	
 	public SecuritySystemEntity getById(Integer id) {
-		return securitySystemEntityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("SecuritySystemEntity with id " + id + " does not exist!"));
+		return securitySystemEntityRepository.findById(id).orElseThrow(() -> new ErrorCodeException(ErrorCode.E1002, HttpStatus.BAD_REQUEST, "SecuritySystemEntity with id " + id + " does not exist!"));
 	}
 	
 	public SecuritySystemEntity getByIdAndAuthToken(Integer id, String authToken) {
@@ -44,7 +46,7 @@ public class SecuritySystemEntityService {
 			return sse;	
 		}
 		
-		throw new IllegalArgumentException("security system id or auth_token is wrong!");
+		throw new ErrorCodeException(ErrorCode.E1003, HttpStatus.BAD_REQUEST);
 	}
 	
 	public String startPairing(Integer securitySystemId, String securitySystemAuthToken) {
@@ -64,7 +66,7 @@ public class SecuritySystemEntityService {
 		PairableSecuritySystem pss = pairableSecuirtySystems.get(securitySystemId);
 		
 		if (!StringUtils.equals(pss.getPairingCode(), ssfpr.getPairingCode())) {
-			throw new IllegalArgumentException("pairing codes do not match!");
+			throw new ErrorCodeException(ErrorCode.E1004, HttpStatus.BAD_REQUEST);
 		}
 		
 		SecuritySystemEntity sse = new SecuritySystemEntity();

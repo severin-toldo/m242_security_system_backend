@@ -16,7 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import com.stoldo.m242_security_system_backend.config.filter.JwtAuthorizationFilter;
-import com.stoldo.m242_security_system_backend.config.filter.JwtLoginFilter;
+import com.stoldo.m242_security_system_backend.config.filter.JwtAuthenticationFilter;
 import com.stoldo.m242_security_system_backend.config.filter.RequestLogFilter;
 import com.stoldo.m242_security_system_backend.service.UserEntityService;
 
@@ -55,7 +55,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.authenticated();
 
 		http
-			.addFilter(new JwtLoginFilter(authenticationManager(), userEntityService, jwtSecret, jwtTokenValidityInHours))
+			.addFilter(new JwtAuthenticationFilter(authenticationManager(), userEntityService, jwtSecret, jwtTokenValidityInHours))
 			.addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtSecret, userEntityService))
 			.addFilterBefore(new RequestLogFilter(), BasicAuthenticationFilter.class);
 	}

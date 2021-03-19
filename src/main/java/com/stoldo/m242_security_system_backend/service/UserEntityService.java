@@ -1,14 +1,16 @@
 package com.stoldo.m242_security_system_backend.service;
 
 import java.util.Collections;
-import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.stoldo.m242_security_system_backend.model.ErrorCode;
+import com.stoldo.m242_security_system_backend.model.ErrorCodeException;
 import com.stoldo.m242_security_system_backend.model.api.UserRegistrationRequest;
 import com.stoldo.m242_security_system_backend.model.entity.UserEntity;
 import com.stoldo.m242_security_system_backend.repository.UserEntityRepository;
@@ -24,15 +26,15 @@ public class UserEntityService {
     
     
     public UserEntity getById(Integer id) {
-        return userEntityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User with id " + id + "not found!"));
+        return userEntityRepository.findById(id).orElseThrow(() -> new ErrorCodeException(ErrorCode.E1002, HttpStatus.BAD_REQUEST, "User with id " + id + "not found!"));
     }
     
     public UserEntity getByEmail(String email) {
-        return userEntityRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("User with email " + email + " not found!"));
+        return userEntityRepository.findByEmail(email).orElseThrow(() -> new ErrorCodeException(ErrorCode.E1002, HttpStatus.BAD_REQUEST, "User with email " + email + " not found!"));
     }
     
     public UserEntity getByRfidUUID(String rfidUUID) {
-        return userEntityRepository.findByRfidUUID(rfidUUID).orElseThrow(() -> new EntityNotFoundException("User with rfidUUID " + rfidUUID + " not found!"));
+        return userEntityRepository.findByRfidUUID(rfidUUID).orElseThrow(() -> new ErrorCodeException(ErrorCode.E1002, HttpStatus.BAD_REQUEST, "User with rfidUUID " + rfidUUID + " not found!"));
     }
 
     public UserEntity saveUser(UserEntity ue) {
