@@ -40,12 +40,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final UserEntityService userEntityService;
 	private final String jwtSecret;
 	private final Integer jwtTokenValidityInHours;
+	
+	private ObjectMapper objectMapper = new ObjectMapper();
 
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res) throws AuthenticationException {
         try {
-        	UserLoginRequest ulr = new ObjectMapper().readValue(req.getInputStream(), UserLoginRequest.class);
+        	UserLoginRequest ulr = objectMapper.readValue(req.getInputStream(), UserLoginRequest.class);
             return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(ulr.getEmail(), ulr.getPassword(), Collections.emptyList()));
         } catch (IOException ex) {
         	throw new ErrorCodeException(ErrorCode.E1001, HttpStatus.BAD_REQUEST);
@@ -59,12 +61,19 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     	
         String token = Constants.JWT_TOKEN_PREFIX + JWT.create()
         		.withSubject(ue.getEmail())
-                .withClaim("user", new ObjectMapper().writeValueAsString(ue))
                 .withExpiresAt(DateUtils.addHours(new Date(), jwtTokenValidityInHours))
                 .sign(Algorithm.HMAC256(jwtSecret.getBytes()));
+
+		res.addHeader(Constants.AUTH_HEADER_NAME, Constants.JWT_TOKEN_PREFIX + token);
+		res.getWriter().write(objectMapper.writeValueAsString(ue));
+		res.getWriter().flush();
+		res.getWriter().close();
         
         log.log(Level.INFO, "Generated JWT token " + token + " for user " + user.getUsername());
-
-		res.addHeader(Constants.AUTH_HEADER_NAME, token);
+    }
+    
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest req, HttpServletResponse res, AuthenticationException ae) throws IOException, ServletException {
+        throw new ErrorCodeException(ErrorCode.E1005, HttpStatus.BAD_REQUEST, ae);
     }
 }

@@ -47,6 +47,7 @@ public class UserEntityService {
 		ue.setLastname(urr.getLastname());
 		ue.setEmail(urr.getEmail());
 		ue.setPassword(passwordEncoder.encode(urr.getPassword()));
+		ue.setRfidUUID(urr.getRfidUUID());
 		
 	    return saveUser(ue);	
     }

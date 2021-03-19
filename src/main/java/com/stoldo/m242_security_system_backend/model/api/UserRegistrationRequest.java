@@ -25,5 +25,8 @@ public class UserRegistrationRequest {
 
 	@NotNull
     private String password;
-
+	
+	@NotNull
+	private String rfidUUID;
+    
 }
