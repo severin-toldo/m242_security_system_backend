@@ -7,17 +7,17 @@ import java.util.Map;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.stoldo.m242_security_system_backend.model.PairableSecuritySystem;
 import com.stoldo.m242_security_system_backend.model.api.SecuritySystemFinishPairRequest;
-import com.stoldo.m242_security_system_backend.model.api.SecuritySystemStartPairRequest;
 import com.stoldo.m242_security_system_backend.model.entity.SecuritySystemEntity;
 import com.stoldo.m242_security_system_backend.repository.SecuritySystemEntityRepository;
-import com.stoldo.m242_security_system_backend.shared.util.CommonUtils;
 
 
 @Service
@@ -26,7 +26,7 @@ public class SecuritySystemEntityService {
 	@Autowired
 	private SecuritySystemEntityRepository securitySystemEntityRepository;
 	
-	private Map<Integer, SecuritySystemEntity> securitySystemsReadyForPairing = new HashMap<>();
+	private Map<Integer, PairableSecuritySystem> pairableSecuirtySystems = new HashMap<>();
 	
 	
 	public List<SecuritySystemEntity> getAll() {
@@ -47,19 +47,32 @@ public class SecuritySystemEntityService {
 		throw new IllegalArgumentException("security system id or auth_token is wrong!");
 	}
 	
-	public void startPairing(Integer securitySystemId, SecuritySystemStartPairRequest sstrp) {
-		SecuritySystemEntity sse = new SecuritySystemEntity();
-		sse.setId(securitySystemId);
-		sse.setName(sstrp.getName());
-
-		securitySystemsReadyForPairing.put(sse.getId(), sse);
+	public String startPairing(Integer securitySystemId, String securitySystemAuthToken) {
+		String pairingCode = RandomStringUtils.randomAlphanumeric(5).toUpperCase();
+		
+		PairableSecuritySystem pss = new PairableSecuritySystem();
+		pss.setId(securitySystemId);
+		pss.setAuthToken(securitySystemAuthToken);
+		pss.setPairingCode(pairingCode);
+		
+		pairableSecuirtySystems.put(pss.getId(), pss);
+		
+		return pairingCode;
     }
 	
 	public SecuritySystemEntity finishPairing(@PathVariable Integer securitySystemId, @RequestBody @Valid SecuritySystemFinishPairRequest ssfpr) {
-		SecuritySystemEntity sse = securitySystemsReadyForPairing.get(securitySystemId);
-		CommonUtils.nullThenThrow(sse, new IllegalArgumentException("passed security system is not ready for pairing!"));
-		securitySystemsReadyForPairing.remove(sse.getId());
-		sse.setAuthToken(CommonUtils.generateAuthToken());
+		PairableSecuritySystem pss = pairableSecuirtySystems.get(securitySystemId);
+		
+		if (!StringUtils.equals(pss.getPairingCode(), ssfpr.getPairingCode())) {
+			throw new IllegalArgumentException("pairing codes do not match!");
+		}
+		
+		SecuritySystemEntity sse = new SecuritySystemEntity();
+		sse.setId(pss.getId());
+		sse.setName(ssfpr.getName());
+		sse.setAuthToken(pss.getAuthToken());
+		
+		pairableSecuirtySystems.remove(sse.getId());
 		
 		return save(sse);
 	}
@@ -67,5 +80,6 @@ public class SecuritySystemEntityService {
 	private SecuritySystemEntity save(SecuritySystemEntity sse) {
 		return securitySystemEntityRepository.save(sse);
 	}
+	
     
 }

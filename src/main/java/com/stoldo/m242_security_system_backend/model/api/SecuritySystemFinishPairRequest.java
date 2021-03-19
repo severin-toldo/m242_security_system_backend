@@ -10,6 +10,12 @@ import lombok.Setter;
 public class SecuritySystemFinishPairRequest {
 	
 	@NotNull
-    private String authToken;
+    private String name;
+	
+	@NotNull
+    private String pairingCode;
+	
+	@NotNull
+    private String securitySystemAuthToken;
 
 }
