@@ -58,7 +58,7 @@ public class SecuritySystemPairService {
 	public SecuritySystemEntity finishPairing(SecuritySystemFinishPairRequest ssfpr) {
 		PairableSecuritySystem pss = pairableSecuirtySystems.get(ssfpr.getPairingCode());
 		
-		if (!StringUtils.equals(pss.getPairingCode(), ssfpr.getPairingCode())) {
+		if (!StringUtils.equalsIgnoreCase(pss.getPairingCode(), ssfpr.getPairingCode())) {
 			throw new ErrorCodeException(ErrorCode.E1004, HttpStatus.BAD_REQUEST);
 		}
 		
