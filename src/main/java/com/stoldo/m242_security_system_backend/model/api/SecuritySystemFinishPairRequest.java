@@ -14,8 +14,5 @@ public class SecuritySystemFinishPairRequest {
 	
 	@NotNull
     private String pairingCode;
-	
-	@NotNull
-    private String securitySystemAuthToken;
 
 }

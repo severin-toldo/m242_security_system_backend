@@ -10,9 +10,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.stoldo.m242_security_system_backend.shared.Constants;
 
 import org.springframework.format.datetime.DateFormatter;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 
 @Configuration
+@EnableScheduling
 public class WebConfiguration implements WebMvcConfigurer {
 	
 	@Value("${security.allowed-origins}")

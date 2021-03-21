@@ -64,7 +64,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withExpiresAt(DateUtils.addHours(new Date(), jwtTokenValidityInHours))
                 .sign(Algorithm.HMAC256(jwtSecret.getBytes()));
 
-		res.addHeader(Constants.AUTH_HEADER_NAME, Constants.JWT_TOKEN_PREFIX + token);
+		res.addHeader(Constants.AUTH_HEADER_NAME, token);
 		res.getWriter().write(objectMapper.writeValueAsString(ue));
 		res.getWriter().flush();
 		res.getWriter().close();
