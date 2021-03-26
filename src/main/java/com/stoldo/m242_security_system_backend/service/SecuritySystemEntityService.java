@@ -14,6 +14,7 @@ import com.stoldo.m242_security_system_backend.model.ErrorCode;
 import com.stoldo.m242_security_system_backend.model.ErrorCodeException;
 import com.stoldo.m242_security_system_backend.model.entity.SecuritySystemEntity;
 import com.stoldo.m242_security_system_backend.repository.SecuritySystemEntityRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -62,6 +63,7 @@ public class SecuritySystemEntityService {
 		return securitySystemEntityRepository.save(sse);
 	}
 
+	@Transactional
 	public void delete(int id) {
 		SecuritySystemEntity sse = getById(id);
 		securitySystemHistoryEntityService.deleteBySecuritySystem(sse);
