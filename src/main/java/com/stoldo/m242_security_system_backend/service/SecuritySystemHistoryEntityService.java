@@ -30,14 +30,18 @@ public class SecuritySystemHistoryEntityService {
 
 	
     public List<SecuritySystemHistoryEntity> getHistory(SecuritySystemEntity sse) {
-	return securitySystemHistoryEntityRepository.findBySecuritySystem(sse);
+		return securitySystemHistoryEntityRepository.findBySecuritySystem(sse);
     }
-	
-    public SecuritySystemHistoryEntity addHistory(SecuritySystemEntity sse, SecuritySystemHistoryCreateRequest sshcr) {
-	Date now = new Date();
-	UserEntity ue = userEntityService.getByRfidUUID(sshcr.getUserRfidUUID());
 
-	SecuritySystemHistoryEntity sshe = new SecuritySystemHistoryEntity();
+    public SecuritySystemHistoryEntity getLatestHistory(SecuritySystemEntity sse) {
+    	return securitySystemHistoryEntityRepository.findBySecuritySystemOrderByDatetimeDescLimit1(sse).orElse(null);
+	}
+
+    public SecuritySystemHistoryEntity addHistory(SecuritySystemEntity sse, SecuritySystemHistoryCreateRequest sshcr) {
+		Date now = new Date();
+		UserEntity ue = userEntityService.getByRfidUUID(sshcr.getUserRfidUUID());
+
+		SecuritySystemHistoryEntity sshe = new SecuritySystemHistoryEntity();
     	sshe.setDatetime(now);
     	sshe.setType(sshcr.getType());
     	sshe.setUser(userEntityService.getByRfidUUID(sshcr.getUserRfidUUID()));
@@ -45,13 +49,13 @@ public class SecuritySystemHistoryEntityService {
     	sshe.setSecuritySystem(sse);
     	
     	if (sshe.getType() == SecuritySystemHistoryType.ALARM) {
-		SimpleMailMessage message = new SimpleMailMessage();
-		message.setFrom("noreply@security-system.com");
-		message.setTo(ue.getEmail());
-		message.setSubject("Alarm! (" + sse.getName() + ")");
-		message.setText("Attention! Alarm has been triggered for Security System \"" + sse.getName() + "\" at " + now);
+			SimpleMailMessage message = new SimpleMailMessage();
+			message.setFrom("noreply@security-system.com");
+			message.setTo(ue.getEmail());
+			message.setSubject("Alarm! (" + sse.getName() + ")");
+			message.setText("Attention! Alarm has been triggered for Security System \"" + sse.getName() + "\" at " + now);
 
-		javaMailSender.send(message);
+			javaMailSender.send(message);
     	}
     	
     	return save(sshe);

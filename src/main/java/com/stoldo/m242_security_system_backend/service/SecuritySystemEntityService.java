@@ -1,6 +1,9 @@
 package com.stoldo.m242_security_system_backend.service;
 
 import java.util.List;
+
+import com.stoldo.m242_security_system_backend.model.SecuritySystemHistoryType;
+import com.stoldo.m242_security_system_backend.model.entity.SecuritySystemHistoryEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +20,9 @@ public class SecuritySystemEntityService {
 	
 	@Autowired
 	private SecuritySystemEntityRepository securitySystemEntityRepository;
+
+	@Autowired
+	private SecuritySystemHistoryEntityService securitySystemHistoryEntityService;
 	
 	
 	public List<SecuritySystemEntity> getAll() {
@@ -24,7 +30,17 @@ public class SecuritySystemEntityService {
     }
 	
 	public SecuritySystemEntity getById(Integer id) {
-		return securitySystemEntityRepository.findById(id).orElseThrow(() -> new ErrorCodeException(ErrorCode.E1002, HttpStatus.BAD_REQUEST, "SecuritySystemEntity with id " + id + " does not exist!"));
+		SecuritySystemEntity sse = securitySystemEntityRepository
+				.findById(id)
+				.orElseThrow(() -> new ErrorCodeException(ErrorCode.E1002, HttpStatus.BAD_REQUEST, "SecuritySystemEntity with id " + id + " does not exist!"));
+
+		SecuritySystemHistoryEntity sshe = securitySystemHistoryEntityService.getLatestHistory(sse);
+
+		if (sshe != null) {
+			sse.setStatus(sshe.getType());
+		}
+
+		return sse;
 	}
 	
 	public SecuritySystemEntity getByIdAndAuthToken(Integer id, String authToken) {
@@ -40,5 +56,10 @@ public class SecuritySystemEntityService {
 	public SecuritySystemEntity save(SecuritySystemEntity sse) {
 		return securitySystemEntityRepository.save(sse);
 	}
-	
+
+	public void delete(int id) {
+		securitySystemEntityRepository.deleteById(id);
+	}
+
+
 }

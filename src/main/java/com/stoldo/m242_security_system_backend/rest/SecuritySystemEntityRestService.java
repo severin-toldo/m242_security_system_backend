@@ -21,5 +21,10 @@ public class SecuritySystemEntityRestService {
     public List<SecuritySystemEntity> getAll() {
     	return securitySystemEntityService.getAll();
     }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    public void delete(@PathVariable int id) {
+        securitySystemEntityService.delete(id);
+    }
     
 }
