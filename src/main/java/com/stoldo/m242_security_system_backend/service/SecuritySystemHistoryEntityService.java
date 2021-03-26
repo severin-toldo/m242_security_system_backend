@@ -4,7 +4,10 @@ import java.util.Date;
 import java.util.List;
 
 
+import com.stoldo.m242_security_system_backend.model.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import com.stoldo.m242_security_system_backend.model.SecuritySystemHistoryType;
@@ -25,17 +28,31 @@ public class SecuritySystemHistoryEntityService {
 	
     public List<SecuritySystemHistoryEntity> getHistory(SecuritySystemEntity sse) {
     	return securitySystemHistoryEntityRepository.findBySecuritySystem(sse);
+	@Autowired
+	private JavaMailSender javaMailSender;
     }
 	
     public SecuritySystemHistoryEntity addHistory(SecuritySystemEntity sse, SecuritySystemHistoryCreateRequest sshcr) {
     	SecuritySystemHistoryEntity sshe = new SecuritySystemHistoryEntity();
     	sshe.setDatetime(new Date());
+		Date now = new Date();
+		UserEntity ue = userEntityService.getByRfidUUID(sshcr.getUserRfidUUID());
+
+		SecuritySystemHistoryEntity sshe = new SecuritySystemHistoryEntity();
+    	sshe.setDatetime(now);
     	sshe.setType(sshcr.getType());
     	sshe.setUser(userEntityService.getByRfidUUID(sshcr.getUserRfidUUID()));
+    	sshe.setUser(ue);
     	sshe.setSecuritySystem(sse);
     	
     	if (sshe.getType() == SecuritySystemHistoryType.ALARM) {
-    		// TODO send alarm email
+			SimpleMailMessage message = new SimpleMailMessage();
+			message.setFrom("noreply@security-system.com");
+			message.setTo(ue.getEmail());
+			message.setSubject("Alarm! (" + sse.getName() + ")");
+			message.setText("Attention! Alarm has been triggered for Security System \"" + sse.getName() + "\" at " + now);
+
+			javaMailSender.send(message);
     	}
     	
     	return save(sshe);
