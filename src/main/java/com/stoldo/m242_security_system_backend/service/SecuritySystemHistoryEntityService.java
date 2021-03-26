@@ -34,7 +34,7 @@ public class SecuritySystemHistoryEntityService {
     }
 
     public SecuritySystemHistoryEntity getLatestHistory(SecuritySystemEntity sse) {
-    	return securitySystemHistoryEntityRepository.findBySecuritySystemOrderByDatetimeDescLimit1(sse).orElse(null);
+    	return securitySystemHistoryEntityRepository.findTop1BySecuritySystemOrderByDatetimeDesc(sse).orElse(null);
 	}
 
     public SecuritySystemHistoryEntity addHistory(SecuritySystemEntity sse, SecuritySystemHistoryCreateRequest sshcr) {
