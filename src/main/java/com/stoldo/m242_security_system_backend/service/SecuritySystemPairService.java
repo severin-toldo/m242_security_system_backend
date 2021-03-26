@@ -16,6 +16,8 @@ import com.stoldo.m242_security_system_backend.model.PairableSecuritySystem;
 import com.stoldo.m242_security_system_backend.model.api.SecuritySystemFinishPairRequest;
 import com.stoldo.m242_security_system_backend.model.entity.SecuritySystemEntity;
 
+import javax.annotation.PostConstruct;
+
 
 @Service
 public class SecuritySystemPairService {
