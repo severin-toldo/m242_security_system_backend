@@ -30,7 +30,20 @@ public class SecuritySystemPairService {
 	
 	@Scheduled(fixedDelay = TWO_MINUTES)
 	public void clearPairableSecuirtySystems() {
+		System.err.print("clearing");
 		pairableSecuirtySystems.clear();
+	}
+
+	@Scheduled(fixedDelay = TWO_MINUTES)
+	public void log() {
+		for (String key : pairableSecuirtySystems.keySet()) {
+			System.err.print(key + ": " + pairableSecuirtySystems.get(key));
+		}
+	}
+	
+	@PostConstruct
+	private void init() {
+		pairableSecuirtySystems = new HashMap<>();
 	}
 	
 	public boolean isPaired(Integer securitySystemId, String securitySystemAuthToken) {
