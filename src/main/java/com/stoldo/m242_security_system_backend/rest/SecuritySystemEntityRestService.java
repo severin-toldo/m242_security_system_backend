@@ -22,6 +22,11 @@ public class SecuritySystemEntityRestService {
     	return securitySystemEntityService.getAll();
     }
 
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public SecuritySystemEntity getById(@PathVariable int id) {
+        return securitySystemEntityService.getById(id);
+    }
+
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public void delete(@PathVariable int id) {
         securitySystemEntityService.delete(id);

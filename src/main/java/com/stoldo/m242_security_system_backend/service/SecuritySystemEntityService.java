@@ -1,6 +1,7 @@
 package com.stoldo.m242_security_system_backend.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.stoldo.m242_security_system_backend.model.SecuritySystemHistoryType;
 import com.stoldo.m242_security_system_backend.model.entity.SecuritySystemHistoryEntity;
@@ -26,19 +27,26 @@ public class SecuritySystemEntityService {
 	
 	
 	public List<SecuritySystemEntity> getAll() {
-    	return securitySystemEntityRepository.findAll();
+    	return securitySystemEntityRepository.findAll().stream()
+				.map(sse -> {
+					sse.setStatus(getStatus(sse));
+    				return sse;
+				})
+				.collect(Collectors.toList());
     }
+
+    private SecuritySystemHistoryType getStatus(SecuritySystemEntity sse) {
+		SecuritySystemHistoryEntity sshe = securitySystemHistoryEntityService.getLatestHistory(sse);
+
+		return sshe != null ? sshe.getType() : null;
+	}
 	
 	public SecuritySystemEntity getById(Integer id) {
 		SecuritySystemEntity sse = securitySystemEntityRepository
 				.findById(id)
 				.orElseThrow(() -> new ErrorCodeException(ErrorCode.E1002, HttpStatus.BAD_REQUEST, "SecuritySystemEntity with id " + id + " does not exist!"));
 
-		SecuritySystemHistoryEntity sshe = securitySystemHistoryEntityService.getLatestHistory(sse);
-
-		if (sshe != null) {
-			sse.setStatus(sshe.getType());
-		}
+		sse.setStatus(getStatus(sse));
 
 		return sse;
 	}
