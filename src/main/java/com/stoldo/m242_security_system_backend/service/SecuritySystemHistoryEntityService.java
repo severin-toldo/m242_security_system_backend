@@ -33,7 +33,7 @@ public class SecuritySystemHistoryEntityService {
 
 	
     public List<SecuritySystemHistoryEntity> getHistory(SecuritySystemEntity sse) {
-		return securitySystemHistoryEntityRepository.findBySecuritySystem(sse);
+		return securitySystemHistoryEntityRepository.findBySecuritySystemOrderByDatetimeDesc(sse);
     }
 
     public SecuritySystemHistoryEntity getLatestHistory(SecuritySystemEntity sse) {

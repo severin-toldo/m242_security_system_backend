@@ -13,7 +13,7 @@ import com.stoldo.m242_security_system_backend.model.entity.SecuritySystemHistor
 @Repository
 public interface SecuritySystemHistoryEntityRepository extends JpaRepository<SecuritySystemHistoryEntity, Integer> {
 	
-	public List<SecuritySystemHistoryEntity> findBySecuritySystem(SecuritySystemEntity sse);
+	public List<SecuritySystemHistoryEntity> findBySecuritySystemOrderByDatetimeDesc(SecuritySystemEntity sse);
 
 	public Optional<SecuritySystemHistoryEntity> findTop1BySecuritySystemOrderByDatetimeDesc(SecuritySystemEntity sse);
 
