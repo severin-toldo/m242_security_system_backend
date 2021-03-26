@@ -29,22 +29,22 @@ public class ServerMainController {
 		return new BCryptPasswordEncoder();
 	}
 
-	@Bean
-	public JavaMailSender getJavaMailSender() {
-		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-		mailSender.setHost("smtp.gmail.com");
-		mailSender.setPort(587);
-
-		mailSender.setUsername("backuptool24@gmail.com");
-		mailSender.setPassword("?m6X7RgwH[3^6>E9E4gQnXFE*r,ENkaUL236,)Dykwcg2@Fxv&");
-
-		Properties props = mailSender.getJavaMailProperties();
-		props.put("mail.transport.protocol", "smtp");
-		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.starttls.enable", "true");
-		props.put("mail.debug", "true");
-
-		return mailSender;
-	}
+//	@Bean
+//	public JavaMailSender getJavaMailSender() {
+//		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+//		mailSender.setHost("smtp.gmail.com");
+//		mailSender.setPort(587);
+//
+//		mailSender.setUsername("backuptool24@gmail.com");
+//		mailSender.setPassword("?m6X7RgwH[3^6>E9E4gQnXFE*r,ENkaUL236,)Dykwcg2@Fxv&");
+//
+//		Properties props = mailSender.getJavaMailProperties();
+//		props.put("mail.transport.protocol", "smtp");
+//		props.put("mail.smtp.auth", "true");
+//		props.put("mail.smtp.starttls.enable", "true");
+//		props.put("mail.debug", "true");
+//
+//		return mailSender;
+//	}
 
 }
