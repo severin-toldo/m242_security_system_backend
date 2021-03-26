@@ -16,5 +16,7 @@ public interface SecuritySystemHistoryEntityRepository extends JpaRepository<Sec
 	public List<SecuritySystemHistoryEntity> findBySecuritySystem(SecuritySystemEntity sse);
 
 	public Optional<SecuritySystemHistoryEntity> findTop1BySecuritySystemOrderByDatetimeDesc(SecuritySystemEntity sse);
-	
+
+	public void deleteBySecuritySystem(SecuritySystemEntity sse);
+
 }

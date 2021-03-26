@@ -28,10 +28,7 @@ public class SecuritySystemEntityService {
 	
 	public List<SecuritySystemEntity> getAll() {
     	return securitySystemEntityRepository.findAll().stream()
-				.map(sse -> {
-					sse.setStatus(getStatus(sse));
-    				return sse;
-				})
+				.peek(sse -> sse.setStatus(getStatus(sse)))
 				.collect(Collectors.toList());
     }
 
@@ -66,8 +63,9 @@ public class SecuritySystemEntityService {
 	}
 
 	public void delete(int id) {
-		securitySystemEntityRepository.deleteById(id);
+		SecuritySystemEntity sse = getById(id);
+		securitySystemHistoryEntityService.deleteBySecuritySystem(sse);
+		securitySystemEntityRepository.delete(sse);
 	}
-
 
 }

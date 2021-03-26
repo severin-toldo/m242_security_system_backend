@@ -37,6 +37,10 @@ public class SecuritySystemHistoryEntityService {
     	return securitySystemHistoryEntityRepository.findTop1BySecuritySystemOrderByDatetimeDesc(sse).orElse(null);
 	}
 
+	public void deleteBySecuritySystem(SecuritySystemEntity sse) {
+		securitySystemHistoryEntityRepository.deleteBySecuritySystem(sse);
+	}
+
     public SecuritySystemHistoryEntity addHistory(SecuritySystemEntity sse, SecuritySystemHistoryCreateRequest sshcr) {
 		Date now = new Date();
 		UserEntity ue = userEntityService.getByRfidUUID(sshcr.getUserRfidUUID());
@@ -60,7 +64,7 @@ public class SecuritySystemHistoryEntityService {
     	
     	return save(sshe);
     }
-    
+
     private SecuritySystemHistoryEntity save(SecuritySystemHistoryEntity sshe) {
     	return securitySystemHistoryEntityRepository.save(sshe);
     }
