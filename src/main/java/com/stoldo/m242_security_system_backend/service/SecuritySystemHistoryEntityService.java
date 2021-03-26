@@ -19,26 +19,25 @@ import com.stoldo.m242_security_system_backend.repository.SecuritySystemHistoryE
 @Service
 public class SecuritySystemHistoryEntityService {
 
-	@Autowired
+    @Autowired
     private SecuritySystemHistoryEntityRepository securitySystemHistoryEntityRepository;
 	
-	@Autowired
-	private UserEntityService userEntityService;
+    @Autowired
+    private UserEntityService userEntityService;
+	
+    @Autowired
+    private JavaMailSender javaMailSender;
 
 	
     public List<SecuritySystemHistoryEntity> getHistory(SecuritySystemEntity sse) {
-    	return securitySystemHistoryEntityRepository.findBySecuritySystem(sse);
-	@Autowired
-	private JavaMailSender javaMailSender;
+	return securitySystemHistoryEntityRepository.findBySecuritySystem(sse);
     }
 	
     public SecuritySystemHistoryEntity addHistory(SecuritySystemEntity sse, SecuritySystemHistoryCreateRequest sshcr) {
-    	SecuritySystemHistoryEntity sshe = new SecuritySystemHistoryEntity();
-    	sshe.setDatetime(new Date());
-		Date now = new Date();
-		UserEntity ue = userEntityService.getByRfidUUID(sshcr.getUserRfidUUID());
+	Date now = new Date();
+	UserEntity ue = userEntityService.getByRfidUUID(sshcr.getUserRfidUUID());
 
-		SecuritySystemHistoryEntity sshe = new SecuritySystemHistoryEntity();
+	SecuritySystemHistoryEntity sshe = new SecuritySystemHistoryEntity();
     	sshe.setDatetime(now);
     	sshe.setType(sshcr.getType());
     	sshe.setUser(userEntityService.getByRfidUUID(sshcr.getUserRfidUUID()));
@@ -46,13 +45,13 @@ public class SecuritySystemHistoryEntityService {
     	sshe.setSecuritySystem(sse);
     	
     	if (sshe.getType() == SecuritySystemHistoryType.ALARM) {
-			SimpleMailMessage message = new SimpleMailMessage();
-			message.setFrom("noreply@security-system.com");
-			message.setTo(ue.getEmail());
-			message.setSubject("Alarm! (" + sse.getName() + ")");
-			message.setText("Attention! Alarm has been triggered for Security System \"" + sse.getName() + "\" at " + now);
+		SimpleMailMessage message = new SimpleMailMessage();
+		message.setFrom("noreply@security-system.com");
+		message.setTo(ue.getEmail());
+		message.setSubject("Alarm! (" + sse.getName() + ")");
+		message.setText("Attention! Alarm has been triggered for Security System \"" + sse.getName() + "\" at " + now);
 
-			javaMailSender.send(message);
+		javaMailSender.send(message);
     	}
     	
     	return save(sshe);
