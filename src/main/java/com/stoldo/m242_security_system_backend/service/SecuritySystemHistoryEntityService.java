@@ -1,5 +1,6 @@
 package com.stoldo.m242_security_system_backend.service;
 
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -7,9 +8,9 @@ import java.util.logging.Level;
 
 import com.stoldo.m242_security_system_backend.model.entity.UserEntity;
 import lombok.extern.java.Log;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import com.stoldo.m242_security_system_backend.model.SecuritySystemHistoryType;
@@ -17,6 +18,7 @@ import com.stoldo.m242_security_system_backend.model.api.SecuritySystemHistoryCr
 import com.stoldo.m242_security_system_backend.model.entity.SecuritySystemEntity;
 import com.stoldo.m242_security_system_backend.model.entity.SecuritySystemHistoryEntity;
 import com.stoldo.m242_security_system_backend.repository.SecuritySystemHistoryEntityRepository;
+import com.stoldo.m242_security_system_backend.shared.Constants;
 
 @Log
 @Service
@@ -27,9 +29,9 @@ public class SecuritySystemHistoryEntityService {
 	
     @Autowired
     private UserEntityService userEntityService;
-	
+    
     @Autowired
-    private JavaMailSender javaMailSender;
+    private EmailService emailService;
 
 	
     public List<SecuritySystemHistoryEntity> getHistory(SecuritySystemEntity sse) {
@@ -56,18 +58,7 @@ public class SecuritySystemHistoryEntityService {
     	sshe.setSecuritySystem(sse);
     	
     	if (sshe.getType() == SecuritySystemHistoryType.ALARM) {
-			try {
-				SimpleMailMessage message = new SimpleMailMessage();
-				message.setFrom("noreply@security-system.com");
-				message.setTo(ue.getEmail());
-				message.setSubject("Alarm! (" + sse.getName() + ")");
-				message.setText("Attention! Alarm has been triggered for Security System \"" + sse.getName() + "\" at " + now);
-
-				javaMailSender.send(message);
-			} catch (Exception e) {
-				log.log(Level.SEVERE, "E-Mail on alarm could not be sent!");
-				e.printStackTrace();
-			}
+    		sendAlarmEmails(sse, now);	
     	}
     	
     	return save(sshe);
@@ -77,4 +68,20 @@ public class SecuritySystemHistoryEntityService {
     	return securitySystemHistoryEntityRepository.save(sshe);
     }
     
+    private void sendAlarmEmails(SecuritySystemEntity sse, Date date) {
+    	String subject = MessageFormat.format("Alarm! ({0})", sse.getName());
+		String body = MessageFormat.format("Achtung! Ein Alarm für das Sicherheitssystem «{0}» wurde am {1} ausgelöst!", sse.getName(), date);
+		
+    	List<UserEntity> users = userEntityService.getAll();
+    	
+    	for (UserEntity ue : users) {
+    		if (!StringUtils.equals(ue.getEmail(), Constants.SYSTEM_USER_EMAIL)) {
+    			try {
+        			emailService.sendEmail(subject, body, ue.getEmail());
+    			} catch (IllegalStateException ise) {
+    				log.log(Level.SEVERE, ise.getMessage());
+    			}
+    		}
+    	}
+    }
 }

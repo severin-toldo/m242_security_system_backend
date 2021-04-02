@@ -1,6 +1,7 @@
 package com.stoldo.m242_security_system_backend.service;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,10 @@ public class UserEntityService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
     
+    
+    public List<UserEntity> getAll() {
+        return userEntityRepository.findAll();
+    }
     
     public UserEntity getById(Integer id) {
         return userEntityRepository.findById(id).orElseThrow(() -> new ErrorCodeException(ErrorCode.E1002, HttpStatus.BAD_REQUEST, "User with id " + id + "not found!"));
