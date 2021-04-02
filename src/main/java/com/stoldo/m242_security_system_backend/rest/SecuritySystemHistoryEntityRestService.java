@@ -36,7 +36,9 @@ public class SecuritySystemHistoryEntityRestService {
     @RequestMapping(method = RequestMethod.POST)
     public boolean addHistory(@RequestHeader("auth_token") String authToken, @PathVariable Integer securitySystemId, @RequestBody @Valid SecuritySystemHistoryCreateRequest sshcr) {
     	SecuritySystemEntity sse = securitySystemEntityService.getByIdAndAuthToken(securitySystemId, authToken);
-    	return securitySystemHistoryEntityService.addHistory(sse, sshcr) != null;
+    	SecuritySystemHistoryEntity savedHistory = securitySystemHistoryEntityService.addHistory(sse, sshcr);
+    	
+    	return savedHistory != null;
     }
     
 }

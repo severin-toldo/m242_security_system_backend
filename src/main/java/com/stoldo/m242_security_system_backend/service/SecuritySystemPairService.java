@@ -2,6 +2,7 @@ package com.stoldo.m242_security_system_backend.service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -16,9 +17,12 @@ import com.stoldo.m242_security_system_backend.model.PairableSecuritySystem;
 import com.stoldo.m242_security_system_backend.model.api.SecuritySystemFinishPairRequest;
 import com.stoldo.m242_security_system_backend.model.entity.SecuritySystemEntity;
 
+import lombok.extern.java.Log;
+
 import javax.annotation.PostConstruct;
 
 
+@Log
 @Service
 public class SecuritySystemPairService {
 	
@@ -32,15 +36,8 @@ public class SecuritySystemPairService {
 	
 	@Scheduled(fixedDelay = TWO_MINUTES)
 	public void clearPairableSecuirtySystems() {
-		System.err.print("clearing");
+		log.log(Level.INFO, "Clearing pairable secuirty systems...");
 		pairableSecuirtySystems.clear();
-	}
-
-	@Scheduled(fixedDelay = TWO_MINUTES)
-	public void log() {
-		for (String key : pairableSecuirtySystems.keySet()) {
-			System.err.print(key + ": " + pairableSecuirtySystems.get(key));
-		}
 	}
 	
 	@PostConstruct
