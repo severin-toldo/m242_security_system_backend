@@ -274,3 +274,4 @@ $RECYCLE.BIN/
 .idea/modules.xml
 .idea/vcs.xml
 m242-security-system-backend.iml
+src/main/resources/application-dev.properties

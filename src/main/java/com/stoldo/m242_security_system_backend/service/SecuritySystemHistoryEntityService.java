@@ -78,8 +78,9 @@ public class SecuritySystemHistoryEntityService {
     		if (!StringUtils.equals(ue.getEmail(), Constants.SYSTEM_USER_EMAIL)) {
     			try {
         			emailService.sendEmail(subject, body, ue.getEmail());
-    			} catch (IllegalStateException ise) {
-    				log.log(Level.SEVERE, ise.getMessage());
+    			} catch (Exception e) {
+    				log.log(Level.SEVERE, e.getMessage());
+    				e.printStackTrace();
     			}
     		}
     	}
