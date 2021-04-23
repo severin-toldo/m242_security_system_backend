@@ -79,10 +79,8 @@ public class SecuritySystemEntityService {
 	}
 	
 	public void changeStatus(SecuritySystemEntity sse, UserEntity ue, SecuritySystemHistoryType status) throws Exception {
-		securitySystemHistoryEntityService.addHistory(sse, status, ue);
-			
 		String topic = MessageFormat.format(MQTT_CHANGE_STATUS_TOPIC, sse.getId());
-		mqttService.publish(topic, status.name());	
+		mqttService.publish(topic, ue.getRfidUUID());	
 	}
 
 }
