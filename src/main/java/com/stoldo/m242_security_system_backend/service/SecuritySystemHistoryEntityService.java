@@ -47,13 +47,16 @@ public class SecuritySystemHistoryEntityService {
 	}
 
     public SecuritySystemHistoryEntity addHistory(SecuritySystemEntity sse, SecuritySystemHistoryCreateRequest sshcr) {
+    	UserEntity ue = userEntityService.getByRfidUUID(sshcr.getUserRfidUUID());
+    	return addHistory(sse, sshcr.getType(), ue);
+    }
+    
+    public SecuritySystemHistoryEntity addHistory(SecuritySystemEntity sse, SecuritySystemHistoryType type, UserEntity ue) {
 		Date now = new Date();
-		UserEntity ue = userEntityService.getByRfidUUID(sshcr.getUserRfidUUID());
 
 		SecuritySystemHistoryEntity sshe = new SecuritySystemHistoryEntity();
     	sshe.setDatetime(now);
-    	sshe.setType(sshcr.getType());
-    	sshe.setUser(userEntityService.getByRfidUUID(sshcr.getUserRfidUUID()));
+    	sshe.setType(type);
     	sshe.setUser(ue);
     	sshe.setSecuritySystem(sse);
     	
@@ -61,8 +64,8 @@ public class SecuritySystemHistoryEntityService {
     		sendAlarmEmails(sse, now);	
     	}
     	
-    	return save(sshe);
-    }
+    	return save(sshe);	
+	}
 
     private SecuritySystemHistoryEntity save(SecuritySystemHistoryEntity sshe) {
     	return securitySystemHistoryEntityRepository.save(sshe);

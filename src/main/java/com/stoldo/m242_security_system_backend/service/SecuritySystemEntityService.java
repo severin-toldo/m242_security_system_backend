@@ -1,10 +1,13 @@
 package com.stoldo.m242_security_system_backend.service;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.stoldo.m242_security_system_backend.model.SecuritySystemHistoryType;
 import com.stoldo.m242_security_system_backend.model.entity.SecuritySystemHistoryEntity;
+import com.stoldo.m242_security_system_backend.model.entity.UserEntity;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +28,11 @@ public class SecuritySystemEntityService {
 
 	@Autowired
 	private SecuritySystemHistoryEntityService securitySystemHistoryEntityService;
+	
+	@Autowired
+	private MqttService mqttService;
+	
+	private static final String MQTT_CHANGE_STATUS_TOPIC = "security-system/{0}/status/";
 	
 	
 	public List<SecuritySystemEntity> getAll() {
@@ -68,6 +76,13 @@ public class SecuritySystemEntityService {
 		SecuritySystemEntity sse = getById(id);
 		securitySystemHistoryEntityService.deleteBySecuritySystem(sse);
 		securitySystemEntityRepository.delete(sse);
+	}
+	
+	public void changeStatus(SecuritySystemEntity sse, UserEntity ue, SecuritySystemHistoryType status) throws Exception {
+		securitySystemHistoryEntityService.addHistory(sse, status, ue);
+			
+		String topic = MessageFormat.format(MQTT_CHANGE_STATUS_TOPIC, sse.getId());
+		mqttService.publish(topic, status.name());	
 	}
 
 }
