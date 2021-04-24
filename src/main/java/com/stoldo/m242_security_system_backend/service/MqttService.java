@@ -1,13 +1,12 @@
 package com.stoldo.m242_security_system_backend.service;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import com.stoldo.m242_security_system_backend.model.ErrorCode;
+import com.stoldo.m242_security_system_backend.model.ErrorCodeException;
 
 @Service
 public class MqttService {
@@ -16,18 +15,14 @@ public class MqttService {
 	private MqttClient mqttClient;
 	
 	
-	@PostConstruct
-    private void onInit() throws Exception {
-		mqttClient.connect();
-    }
-	
-	public void publish(String topic, String payload) throws MqttPersistenceException, MqttException {
-		mqttClient.publish(topic, payload.getBytes(), 2, true);
+	public void publish(String topic, String payload) {
+		try {
+			mqttClient.connect();
+			mqttClient.publish(topic, payload.getBytes(), 2, true);
+			mqttClient.disconnect();
+		} catch (Exception e) {
+			throw new ErrorCodeException(ErrorCode.E1006, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
-	
-	@PreDestroy
-    private void onDestroy() throws Exception {
-		mqttClient.disconnect();
-    }
 
 }
